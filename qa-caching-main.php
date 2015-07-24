@@ -86,7 +86,7 @@ class qa_caching_main {
                 $this->html .= $this->debug;
             }
             if (function_exists("sem_get") && ($mutex = @sem_get(2013, 1, 0644 | IPC_CREAT, 1)) && @sem_acquire($mutex)) {
-                file_put_contents($this->cache_file, $this->html) . sem_release($mutex);
+                @file_put_contents($this->cache_file, $this->html) . sem_release($mutex);
             /**/
             } else if (($mutex = @fopen($this->cache_file, "w")) && @flock($mutex, LOCK_EX)) {
                 fwrite($mutex, $this->html);
@@ -151,7 +151,7 @@ class qa_caching_main {
        
         qa_check_page_clicks();
 
-        $contents = file_get_contents($this->cache_file);
+        $contents = @file_get_contents($this->cache_file);
         
         if ( ! $contents ) return; //cache failure, graceful exit
 
