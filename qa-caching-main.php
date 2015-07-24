@@ -9,6 +9,7 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  * Caches all pages for unregistered users.
  * @author Vadim Kr. + sama55
  * @copyright (c) 2015 bndr + sama55
+ * @copyright (c) 2015 stevenev
  * @license http://creativecommons.org/licenses/by-sa/3.0/legalcode
  */
 define('QA_CACHING_DIR', dirname(__FILE__) . '/qa-cache'); //Cache Directory
