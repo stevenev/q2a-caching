@@ -152,6 +152,8 @@ class qa_caching_main {
         qa_check_page_clicks();
 
         $contents = file_get_contents($this->cache_file);
+        
+        if ( ! $contents ) return; //cache failure, graceful exit
 
         $qa_content = array();	// Dummy contents
         $userid = qa_get_logged_in_userid();
