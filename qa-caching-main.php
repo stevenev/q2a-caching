@@ -11,8 +11,8 @@ if (!defined('QA_VERSION')) { // don't allow this page to be requested directly 
  * @copyright (c) 2015 bndr + sama55
  * @license http://creativecommons.org/licenses/by-sa/3.0/legalcode
  */
-define('QA_CACHING_DIR', QA_BASE_DIR . 'qa-cache'); //Cache Directory
-define('QA_CACHING_DIR_MOBILE', QA_BASE_DIR . 'qa-cache/mobile'); //Cache Directory for mobile
+define('QA_CACHING_DIR', dirname(__FILE__) . '/qa-cache'); //Cache Directory
+//define('QA_CACHING_DIR_MOBILE', QA_BASE_DIR . 'qa-cache/mobile'); //Cache Directory for mobile
 define('QA_CACHING_STATUS', (int) qa_opt('qa_caching_enabled')); // "1" - Turned On, "0" - Turned off
 define('QA_CACHING_EXPIRATION_TIME', (int) qa_opt('qa_caching_expiration_time')); //Cache Expiration In seconds
 define('QA_CACHING_EXPIRATION_EVENTS', qa_opt('qa_caching_expiration_events')); //Cache Expiration events
@@ -22,11 +22,14 @@ define('QA_CACHING_DEBUG', (int) qa_opt('qa_caching_debug')); //Output debug inf
 
 class qa_caching_main {
     protected $is_logged_in, $cache_file, $html, $debug, $timer;
+    protected $mobile;
+         
     /**
      * Function that is called at page initialization
      */
     function init_page() {
         $this->is_logged_in = qa_get_logged_in_userid();
+        $this->mobile = qa_is_mobile_probably();
         $this->timer = microtime(true);
         $this->cache_file = $this->get_filename();
         if($this->should_clear_caching()) {
@@ -79,9 +82,9 @@ class qa_caching_main {
             mkdir(QA_CACHING_DIR, 0755, TRUE);
         }
         if (is_dir(QA_CACHING_DIR) && is_writable(QA_CACHING_DIR)) {
-            if (qa_opt('site_theme') != qa_opt('site_theme_mobile') && !file_exists(QA_CACHING_DIR_MOBILE)) {
-                mkdir(QA_CACHING_DIR_MOBILE, 0755, TRUE);
-            }
+            //if (qa_opt('site_theme') != qa_opt('site_theme_mobile') && !file_exists(QA_CACHING_DIR_MOBILE)) {
+            //    mkdir(QA_CACHING_DIR_MOBILE, 0755, TRUE);
+            //}
             if(QA_CACHING_DEBUG) {
                 $this->html .= $this->debug;
             }
@@ -114,6 +117,11 @@ class qa_caching_main {
      * Clear cache.
      */
     public function clear_cache() {
+    	
+    	// in linux, delete entire directory and rebuild it, windows.. just fall through to do the recursive delete
+    	$comm = "rm -rf " . QA_CACHING_DIR . "; mkdir " . QA_CACHING_DIR;
+    	@exec( $comm ); // '@' to ensure no warning, if exec not avail. then it would follow through to recursive delete
+    	
         $this->unlinkRecursive(QA_CACHING_DIR);
     }
     /**
@@ -289,11 +297,14 @@ class qa_caching_main {
      */
     private function get_filename() {
         $md5 = md5($_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
-        if(!qa_is_mobile_probably()) {
-            return QA_CACHING_DIR . "/" . $md5;
-        } else {
-            return QA_CACHING_DIR_MOBILE . "/" . $md5;
-        }
+        //if(!qa_is_mobile_probably()) {
+        //    return QA_CACHING_DIR . "/" . $md5;
+        //} else {
+        //    return QA_CACHING_DIR_MOBILE . "/" . $md5;
+        //}
+        
+        return QA_CACHING_DIR . '/' . $md5 . ( $this->mobile? '_mobile': '_desktop' );
+        
     }
     /**
      * What page does the user see?
