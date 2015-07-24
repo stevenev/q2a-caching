@@ -289,7 +289,7 @@ class qa_caching_main {
      */
     private function get_filename() {
         $md5 = md5($_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"]);
-        if(qa_opt('site_theme') == qa_opt('site_theme_mobile') || !qa_is_mobile_probably()) {
+        if(!qa_is_mobile_probably()) {
             return QA_CACHING_DIR . "/" . $md5;
         } else {
             return QA_CACHING_DIR_MOBILE . "/" . $md5;
