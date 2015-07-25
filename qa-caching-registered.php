@@ -25,4 +25,6 @@ class qa_cache_registered
 
 }
 
-?>
+/*
+	Omit PHP closing tag to help avoid accidental output
+*/

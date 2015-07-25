@@ -17,6 +17,8 @@ if (!defined('QA_VERSION'))
     exit;
 }
 
+if ( MYIP <> 1 && INFOCC_LOCAL <> 1 ) return;
+
 if ( isset( $_SESSION['cache_use_off'] )) return;  //just get out! this is for anon users
 
 /**
@@ -46,3 +48,7 @@ qa_register_plugin_layer(
 qa_register_plugin_overrides(
     'qa-caching-overrides.php' // PHP file containing overrided function
 );
+
+/*
+	Omit PHP closing tag to help avoid accidental output
+*/

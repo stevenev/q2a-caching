@@ -533,3 +533,7 @@ class qa_caching_main {
         );
     }
 }
+
+/*
+	Omit PHP closing tag to help avoid accidental output
+*/
