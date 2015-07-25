@@ -17,6 +17,8 @@ if (!defined('QA_VERSION'))
     exit;
 }
 
+if ( isset( $_SESSION['cache_use_off'] )) return;  //just get out! this is for anon users
+
 /**
  * Include the caching for registered users
  */

@@ -36,6 +36,7 @@ class qa_caching_main {
         if($this->should_clear_caching()) {
             $this->clear_cache();
         }
+                
         if ($this->check_cache() && $this->do_caching()) {
             $this->get_cache();
         } else if ($this->do_caching()) {
@@ -233,6 +234,9 @@ class qa_caching_main {
         if($this->is_logged_in) {
             return false;
         } else if (preg_match("/^(?:POST|PUT)$/i", $_SERVER["REQUEST_METHOD"])) {
+        	
+        	$_SESSION['cache_use_off'] = 1; //if anon user did anything with forms, no longer show them any cache, so they can edit, etc.
+        	
             return false;
         }
         if(qa_request_part(0) == 'admin') {
