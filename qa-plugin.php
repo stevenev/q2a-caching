@@ -17,9 +17,18 @@ if (!defined('QA_VERSION'))
     exit;
 }
 
-if ( MYIP <> 1 && INFOCC_LOCAL <> 1 ) return;
+//if ( MYIP <> 1 && INFOCC_LOCAL <> 1 ) return;
 
-if ( isset( $_SESSION['cache_use_off'] )) return;  //just get out! this is for anon users
+if ( isset( $_SESSION['cache_use_off'] )) {
+	
+	//if admin page, then bust this so we can do the settings
+	if ( preg_match( '#/admin[/$]#', $_SERVER['REQUEST_URI'] ) ) {
+		unset( $_SESSION['cache_use_off'] );
+	}
+	else {
+		return;  //just get out! this is for anon users
+	}
+}
 
 /**
  * Include the caching for registered users
