@@ -17,23 +17,16 @@ if (!defined('QA_VERSION'))
     exit;
 }
 
-if ( isset( $_SESSION['cache_use_off'] )) {
-	
-	// if user logged in, bust the session var.
-	// qa_session_userid_xxxx -> 1
-	foreach( $_SESSION AS $cache_session_key => $cache_session_val ) {
-		if ( preg_match( '#^qa_session_userid_#', $cache_session_key ) && $cache_session_val > 0 ) {
-			$cache_is_logged_in = 1;
-		}
-	}
-	
-	if ( isset( $cache_is_logged_in ) ) {
-		unset( $_SESSION['cache_use_off'] );
-	}
-	else {
-		return;  //just get out! this is for anon users who have posted something
-	}
-	
+//register a special module that resets the session flag if logging in
+qa_register_plugin_module(
+    'event', // type of module
+    'qa-caching-event.php', // PHP file containing module class
+    'qa_caching_session_reset_event', // module class name in that PHP file
+    'q2a Caching Plugin Session Reset Event Handler' // human-readable name of module
+);
+
+if ( isset( $_SESSION['cache_use_off'] )) {	
+	return;  //just get out! this is for anon users who have posted something, don't exec. any of the cache code, see event that turns this status off		
 }
 
 /**
